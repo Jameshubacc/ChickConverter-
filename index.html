@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#141414">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Currency">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+  <title>Currency</title>
+</head>
+<body>
+
+  <!-- Status bar -->
+  <div id="status-bar">
+    <span id="status-text">Loading…</span>
+    <button id="refresh-btn" title="Refresh rates">↻</button>
+  </div>
+
+  <!-- Conversion panel -->
+  <div id="panel">
+
+    <!-- FROM row -->
+    <div class="currency-row" id="from-row">
+      <div class="currency-left">
+        <span class="flag" id="from-flag"></span>
+        <div class="currency-info">
+          <span class="currency-code" id="from-code"></span>
+          <span class="currency-name" id="from-name"></span>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <span class="amount input-amount large" id="input-amount">0</span>
+    </div>
+
+    <!-- Mid bar -->
+    <div id="mid-bar">
+      <span id="rate-label"></span>
+      <button id="swap-btn">⇅</button>
+    </div>
+
+    <!-- TO row -->
+    <div class="currency-row" id="to-row">
+      <div class="currency-left">
+        <span class="flag" id="to-flag"></span>
+        <div class="currency-info">
+          <span class="currency-code" id="to-code"></span>
+          <span class="currency-name" id="to-name"></span>
+        </div>
+        <span class="chevron">›</span>
+      </div>
+      <span class="amount result-amount large" id="result-amount">—</span>
+    </div>
+
+  </div><!-- /panel -->
+
+  <!-- Keypad -->
+  <div id="keypad">
+    <div class="key-row">
+      <button class="key" data-val="7">7</button>
+      <button class="key" data-val="8">8</button>
+      <button class="key" data-val="9">9</button>
+      <button class="key dark" data-val="DEL">⌫</button>
+    </div>
+    <div class="key-row">
+      <button class="key" data-val="4">4</button>
+      <button class="key" data-val="5">5</button>
+      <button class="key" data-val="6">6</button>
+      <button class="key dark" data-val="CLR">C</button>
+    </div>
+    <div class="key-row">
+      <button class="key" data-val="1">1</button>
+      <button class="key" data-val="2">2</button>
+      <button class="key" data-val="3">3</button>
+      <div class="key empty"></div>
+    </div>
+    <div class="key-row">
+      <button class="key" data-val=".">.</button>
+      <button class="key" data-val="0">0</button>
+      <button class="key" data-val="00">00</button>
+      <div class="key empty"></div>
+    </div>
+  </div>
+
+  <!-- Currency picker modal -->
+  <div id="picker-overlay">
+    <div id="picker-sheet">
+      <div id="picker-header">
+        <span id="picker-title">Select Currency</span>
+        <button id="picker-close">Done</button>
+      </div>
+      <input id="picker-search" type="search" placeholder="Search by name or code…" autocomplete="off" autocorrect="off">
+      <div id="picker-list"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

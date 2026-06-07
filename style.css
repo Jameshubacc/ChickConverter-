@@ -1,0 +1,264 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation; /* kills double-tap zoom + the 300ms tap delay */
+}
+
+:root {
+  --bg: #141414;
+  --panel: #1e1e1e;
+  --key: #2c2c2c;
+  --key-dark: #3a3a3a;
+  --border: #2a2a2a;
+  --orange: #FF9500;
+  --text: #ffffff;
+  --text-dim: #aaaaaa;
+  --text-muted: #555555;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow: hidden;
+  overscroll-behavior: none;       /* no rubber-band bounce / pull-to-refresh */
+  position: fixed;                  /* lock the page so only the picker list scrolls */
+  inset: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  padding-top: env(safe-area-inset-top, 12px);
+  padding-bottom: env(safe-area-inset-bottom, 8px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  height: 100dvh;
+}
+
+/* ── Status bar ─────────────────────────────────────── */
+#status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  flex-shrink: 0;
+}
+
+#status-text { font-size: 12px; color: var(--text-muted); }
+#status-text.stale { color: var(--orange); }
+
+#refresh-btn {
+  background: none;
+  border: none;
+  color: var(--orange);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+  transition: opacity .2s;
+}
+#refresh-btn:disabled { opacity: .35; }
+#refresh-btn.spinning { animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Conversion panel ───────────────────────────────── */
+#panel {
+  margin: 0 16px;
+  background: var(--panel);
+  border-radius: 20px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.currency-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.currency-row:active { background: rgba(255,255,255,.04); }
+
+.currency-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.flag { font-size: 28px; flex-shrink: 0; }
+
+.currency-info { display: flex; flex-direction: column; }
+.currency-code { font-size: 17px; font-weight: 700; }
+.currency-name { font-size: 11px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+.chevron { color: #3a3a3a; font-size: 18px; margin-left: 4px; }
+
+.amount {
+  font-size: 32px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  max-width: 54%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.amount.input-amount { color: var(--text); }
+.amount.result-amount { color: var(--text-dim); }
+.amount.large { font-size: 32px; }
+.amount.medium { font-size: 26px; }
+.amount.small { font-size: 20px; }
+
+/* ── Mid bar ────────────────────────────────────────── */
+#mid-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 20px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+#rate-label { font-size: 11px; color: #3d3d3d; flex: 1; }
+
+#swap-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--orange);
+  border: none;
+  color: #000;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform .2s, opacity .1s;
+}
+#swap-btn:active { transform: scale(.9); opacity: .8; }
+
+/* ── Keypad ─────────────────────────────────────────── */
+#keypad {
+  flex: 1;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  gap: 10px;
+  padding: 14px 16px;
+  min-height: 0;
+}
+
+.key-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.key {
+  background: var(--key);
+  border: none;
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .1s, transform .08s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+.key.dark { background: var(--key-dark); }
+.key.empty { background: transparent; cursor: default; pointer-events: none; }
+.key:active { transform: scale(.93); }
+
+/* ── Currency picker modal ──────────────────────────── */
+#picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: none;
+  align-items: flex-end;
+}
+#picker-overlay.open { display: flex; animation: fadeIn .2s; }
+@keyframes fadeIn { from { opacity: 0; } }
+
+#picker-sheet {
+  background: #111;
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  height: 85dvh;            /* fixed height — sheet no longer shrinks/moves as results filter */
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  animation: slideUp .25s ease-out;
+}
+@keyframes slideUp { from { transform: translateY(100%); } }
+
+#picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px 12px;
+  flex-shrink: 0;
+}
+#picker-title { font-size: 17px; font-weight: 600; }
+#picker-close {
+  background: none;
+  border: none;
+  color: var(--orange);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#picker-search {
+  margin: 0 16px 10px;
+  background: #222;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-size: 16px;          /* 16px min — iOS auto-zooms inputs smaller than this */
+  outline: none;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+#picker-search::placeholder { color: #444; }
+
+#picker-list {
+  overflow-y: auto;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;   /* momentum scrolling on iOS */
+  overscroll-behavior: contain;        /* scroll stays in the list, page never moves */
+}
+
+.picker-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background .1s;
+  gap: 14px;
+}
+.picker-item:active { background: rgba(255,255,255,.05); }
+.picker-item + .picker-item { border-top: 1px solid #1a1a1a; }
+
+.picker-flag { font-size: 26px; flex-shrink: 0; }
+.picker-info { flex: 1; }
+.picker-code { font-size: 16px; font-weight: 600; }
+.picker-name { font-size: 13px; color: #666; margin-top: 1px; }
+.picker-check { color: var(--orange); font-size: 18px; font-weight: 700; }
