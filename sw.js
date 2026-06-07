@@ -1,6 +1,8 @@
-const CACHE = 'currency-v5';
-const SHELL = ['/', '/index.html', '/style.css', '/app.js', '/manifest.json',
-               '/apple-touch-icon.png', '/icon-192.png', '/icon-512.png'];
+const CACHE = 'currency-v6';
+// Relative paths so the app works whether served from the domain root (localhost)
+// or a project sub-path (e.g. /ChickConverter-/ on GitHub Pages).
+const SHELL = ['./', './index.html', './style.css', './app.js', './manifest.json',
+               './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
